@@ -55,7 +55,7 @@ This dataset can be used for:
 
 * **Kaggle source:** [link](https://www.kaggle.com/datasets/adisongoh/it-service-ticket-classification-dataset)
 * **Dataset:** [here](https://github.com/Lunalykaya/IT-Service-Ticket-Classification/blob/main/data/archive%20(50).zip)
-* **Test set (after splitting):** [link here]
+* **Test set (after splitting):** [link here](https://github.com/Lunalykaya/IT-Service-Ticket-Classification/blob/main/data/test_data.csv)
 
 ## Metadata
 
