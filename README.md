@@ -1,42 +1,53 @@
-# IT-Service-Ticket-Classification
-IT Service Ticket Classification (NLP) [in progress]
+# IT Service Ticket Classification
 
+Учебный проект по предмету *Deep Learning*. Цель — автоматическая классификация заявок (IT service tickets) на несколько тематических групп.
 
-Project Title: Support Ticket Classification (Support Ticket Triage)
-Dataset: IT Service Ticket Classification Dataset
+## Данные
 
-Project Overview
-This project focuses on automating the classification and routing of IT service support tickets using supervised machine learning. The objective is to assign each ticket to the appropriate department or category based on its textual content.
+* Использован датасет с текстами заявок (`Document`) и их тематическими категориями (`Topic_group`).
+* Проведён разбиение на **train / validation / test** с сохранением пропорций классов.
+* Тексты были предварительно токенизированы (с помощью `BERT tokenizer`).
 
-1. Data Loading and Initial Exploration
+## Модель
 
-* The CSV file was successfully loaded.
-* Preliminary inspection (head, tail, dtypes, missing values) confirmed that the structure and content were intact.
-* The dataset contains 47,837 support tickets across multiple topic groups.
+Для решения задачи была использована предобученная трансформерная модель **BERT** (через библиотеку `transformers`).
 
-2. Text Preprocessing
+* Тренировка выполнена с помощью **Hugging Face Trainer API**.
+* Параметры обучения:
 
-* All text entries were cleaned by removing HTML tags, links, special characters, and extra whitespace.
-* Texts were converted to lowercase.
-* Tokenization was performed at the word level.
-* Stopwords were removed, and lemmatization was applied to normalize the tokens.
-* Manual inspection of a sample confirmed the quality of the preprocessing.
+  * learning_rate = `2e-5`
+  * batch_size = `32`
+  * epochs = `3`
+  * weight_decay = `0.01`
+* В процессе обучения сохранялась лучшая модель (`load_best_model_at_end=True`).
 
-3. Vectorization
+## Текущий результат
 
-* TF-IDF vectorization was applied using unigrams and bigrams (min\_df=5, max\_df=0.8).
-  
+* Модель обучена и сохранена в папку `/results`.
+* На данный момент доступны:
 
-4. Model Training and Evaluation
+  * Лог-файлы по эпохам (loss, learning rate)
+  * Обученная модель (можно загрузить и использовать для предсказаний)
+* Метрики качества (accuracy, precision, recall, F1-score) можно получить, добавив функцию `compute_metrics` при инициализации Trainer.
 
-* The dataset was split into training and test sets.
-* Baseline classifier was trained: Logistic Regression.
+## Применение
 
-5. Ongoing Work
+После обучения модель может использоваться для классификации новых заявок:
 
-* Hyperparameter tuning.
-* Evaluation based on accuracy, precision, recall, and F1-score for each topic group.
-* A confusion matrix generation and visualization to identify underperforming classes.
-* Additional models such as Decision Trees, Random Forests, XGBoost, RNNs, and BERT are currently being implemented.
-* A comparative analysis across all models will be conducted.
-* The final model will be deployed via a REST API built with FastAPI, containerized with Docker, and prepared for integration into a larger IT support workflow.
+```python
+ticket = "Please create record for network access"
+predicted_class = predict_ticket(ticket)
+print(predicted_class)
+```
+
+Также доступен Jupyter-виджет, позволяющий в интерактивном режиме вводить текст заявки и получать предсказанную категорию.
+
+## Структура проекта
+
+```
+├── ticket_classifier/   # Код обучения и инференса
+├── results/             # Обученная модель, логи
+├── data/                # Датасет
+└── README.md
+```
+
