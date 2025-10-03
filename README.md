@@ -4,37 +4,37 @@ This project was completed as part of the [**Deep Learning**](https://www.ef.uns
 
 ---
 
-##  Содержание
+##  Content
 
-1. Описание проекта
-2. Данные
-3. Предобработка
-4. Модель
-5. Обучение
-6. Результаты
-7. Применение
-8. Структура репозитория
-9. Дальше
-
----
-
-## 1. Описание проекта
-
-**Цель:** автоматическая классификация IT-заявок по темам, чтобы ускорить маршрутизацию и обработку.
-
-
-**Контекст:** учебный проект по предмету [*Глубокое обучение*](https://www.ef.uns.ac.rs/ofakultetu/studijski-programi/mas-advanced-data-analytics-in-business-files/deep-learning.pdf) 
-
-
-**Кратко:** Fine-tuning предобученной трансформерной модели на корпусе тикетов.
+1. Project Description
+2. Data
+3. Preprocessing
+4. Model
+5. Training
+6. Results
+7. Application
+8. Repo structure
+9. Future Work
 
 ---
 
-## 2. Данные
+## 1. Project Description
 
-* **Источник:** [Kaggle](https://www.kaggle.com/datasets/adisongoh/it-service-ticket-classification-dataset)
-* **Формат:** таблица с колонками `Document` (текст тикета) и `Topic_group` (категория).
-* **Инфо (df.info()):**
+**Goal:** Automatic classification of IT requests by topic to speed up routing and processing.
+
+
+**Context:** university project for the course [*Deep Learning*](https://www.ef.uns.ac.rs/ofakultetu/studijski-programi/mas-advanced-data-analytics-in-business-files/deep-learning.pdf) 
+
+
+**Briefly:** Fine-tuning of the pre-trained transformer model on the ticket corpus.
+
+---
+
+## 2. Data
+
+* **Source:** [Kaggle](https://www.kaggle.com/datasets/adisongoh/it-service-ticket-classification-dataset)
+* **Format:** table with columns `Document` (ticket text) and `Topic_group` (category).
+* **Info (df.info()):**
 
   ```
   <class 'pandas.core.frame.DataFrame'>
@@ -45,12 +45,12 @@ This project was completed as part of the [**Deep Learning**](https://www.ef.uns
   dtypes: object(2)
   memory usage: 747.6+ KB
   ```
-* **Разбиение выборки:**
+* **Splitting the sample:**
 
   * Train size: **34442**
   * Validation size: **3827**
   * Test size: **9568**
-* **Баланс классов:**
+* **Class balance:**
 * 
   <img width="602" height="298" alt="image" src="https://github.com/user-attachments/assets/b19b6720-c013-40aa-b06d-8297fb6516a2" />
 
@@ -59,10 +59,9 @@ This project was completed as part of the [**Deep Learning**](https://www.ef.uns
 
 ---
 
-## 3. Предобработка
+## 3. Preprocessing
 
-* **Токенизация:** использован `AutoTokenizer("distilbert-base-uncased")` (Hugging Face).
-  Рекомендованные параметры токенайзера в проекте:
+* **Tokenization:** was used `AutoTokenizer("distilbert-base-uncased")` (Hugging Face).
 
   ```python
   tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
@@ -70,8 +69,7 @@ This project was completed as part of the [**Deep Learning**](https://www.ef.uns
   ```
 
 
-* **Работа с метками:** использован словарь `label2id` и обратный `id2label` (чтобы хранить метки как числа в Dataset и возвращать читаемые названия при инференсе).
-
+* **Working with labels:** the dictionary `label2id` and the reverse `id2label` are used (to store labels as numbers in the Dataset and return readable names during inference).
   ```python
   label2id = {
       "Hardware": 0,
@@ -86,22 +84,22 @@ This project was completed as part of the [**Deep Learning**](https://www.ef.uns
   id2label = {v: k for k, v in label2id.items()}
   ```
 
-  Маппинг фиксирует порядок классов и упрощает сопряжение с моделью (числовые метки нужны для loss/метрик).
+  Mapping fixes the order of classes and simplifies pairing with the model (numeric labels are needed for loss/metrics).
 
 ---
 
-## 4. Модель
+## 4. Model
 
-* **Базовая архитектура:** [`distilbert-base-uncased` (легковесный BERT-энкодер)](https://huggingface.co/distilbert/distilbert-base-uncased)
-* **Библиотеки:** `transformers`, `torch`, `pandas`, `numpy`, `sklearn`, `matplotlib`, `seaborn`, `ipywidgets`.
-* **Класс/голова:** стандартная голова `SequenceClassification` (полносвязный слой на выходе с `num_labels=8`).
-* **Loss:** CrossEntropyLoss (встроен в класс модели HF).
+* **Basic architecture:** [`distilbert-base-uncased` (lightweight BERT encoder)](https://huggingface.co/distilbert/distilbert-base-uncased)
+* **Libraries:** `transformers`, `torch`, `pandas`, `numpy`, `sklearn`, `matplotlib`, `seaborn`, `ipywidgets`.
+* **Class:** standart `SequenceClassification` (fully connected layer at the output with `num_labels=8`).
+* **Loss:** CrossEntropyLoss (built into the HF model class).
 
 ---
 
-## 5. Обучение — параметры и пояснения
+## 5. Training
 
-**Финальные TrainingArguments, использованные при обучении:**
+**Final TrainingArguments used in training:**
 
 ```python
 training_args = TrainingArguments(
@@ -121,7 +119,6 @@ training_args = TrainingArguments(
 )
 ```
 
-**Пояснения по каждой строчке:**
 
 * `output_dir="./results"` — папка для чекпойнтов и финальной модели.
 * `evaluation_strategy="epoch"` — валидация выполняется в конце каждой эпохи; удобно мониторить поведение модели по эпохам.
@@ -136,13 +133,13 @@ training_args = TrainingArguments(
 * `load_best_model_at_end=True` — по окончании тренировки загрузить чекпоинт с наилучшей метрикой валидации (если задан metric_for_best_model).
 * `report_to=[]` — отключён W&B (чтобы не блокироваться ожиданием логина).
 
-**Оптимизатор / scheduler:** Trainer по умолчанию использует `AdamW` и типовой scheduler (linear warmup). Это подходящая настройка для тонкой подстройки трансформеров.
+**Optimizer / scheduler:** Trainer uses AdamW and a standard scheduler (linear warmup) by default. This is a suitable setting for fine-tuning transformers.
 
 ---
 
-## 6. Результаты (по эпохам)
+## 6. Results
 
-**Training / Validation loss (по логам):**
+**Training / Validation loss:**
 
 | Epoch | Training Loss | Validation Loss | Accuracy | Precision | Recall | F1     |
 | ----- | ------------- | --------------- | -------- | --------- | ------ | ------ |
@@ -150,11 +147,11 @@ training_args = TrainingArguments(
 | 2     | 0.3578        | 0.3743          | 0.8712   | 0.8718    | 0.8712 | 0.8709 |
 | 3     | 0.2600        | 0.3740          | 0.8725   | 0.8722    | 0.8725 | 0.8721 |
 
-**Интерпретация:**
+**Interpretation:**
 
-* Train loss существенно уменьшается → модель учится.
+* Train loss decreases significantly → the model learns.
 
-**Метрики (accuracy, precision, recall, f1) на тестовой выборке:**
+**Metrics (accuracy, precision, recall, f1) on the test sample:**
 
 | Класс                 | Precision | Recall | F1-score | Support |
 | --------------------- | --------- | ------ | -------- | ------- |
@@ -175,16 +172,15 @@ training_args = TrainingArguments(
 
 ---
 
-## 7. Применение (инференс + виджет)
+## 7. Application
 
-**Jupyter-виджет** (ipywidgets) — для интерактивного ввода тикета и получения предсказания прямо в ноутбуке.
+**Jupyter-виджет** (ipywidgets) for interactive ticket entry and receiving a prediction directly on your laptop.
 
 <img width="1516" height="654" alt="Снимок экрана 2025-10-03 133425" src="https://github.com/user-attachments/assets/fbde0b2a-885a-4545-94eb-74452681bc8b" />
 
 
 
-## 8. Структура репозитория
-
+## 8. Repository structure
 ```
 ├── data/               # Исходные датасеты (raw, processed)
 ├── notebooks/          # Jupyter ноутбуки (EDA, обучение, inference)
@@ -197,8 +193,8 @@ training_args = TrainingArguments(
 
 ---
 
-## 9. Дальше / Future work
+## 9. Future work
 
-* Прототип API (FastAPI) и/или Streamlit UI (если нужно демо).
-* Подумать про class imbalance: weighted loss, oversampling, focal loss.
-* Документировать pipeline в виде Docker образа (для презентации/портфолио).
+* Prototype API (FastAPI) and/or Streamlit UI.
+* Think about class imbalance: weighted loss, oversampling, focal loss.
+* Document the pipeline as a Docker image (for presentation/portfolio).
