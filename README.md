@@ -2,7 +2,7 @@
 
 This project was completed as part of the [**Deep Learning**](https://www.ef.uns.ac.rs/ofakultetu/studijski-programi/mas-advanced-data-analytics-in-business-files/deep-learning.pdf) course (ADA16) within the [Advanced Data Analytics in Business study program](https://www.ef.uns.ac.rs/ofakultetu/studijski-programi/mas-advanced-data-analytics-in-business.php).
 
----
+
 
 ##  Content
 
@@ -16,7 +16,7 @@ This project was completed as part of the [**Deep Learning**](https://www.ef.uns
 8. Repo structure
 9. Future Work
 
----
+
 
 ## 1. Project Description
 
@@ -28,7 +28,7 @@ This project was completed as part of the [**Deep Learning**](https://www.ef.uns
 
 **Briefly:** Fine-tuning of the pre-trained transformer model on the ticket corpus.
 
----
+
 
 ## 2. Data
 
@@ -57,7 +57,7 @@ This project was completed as part of the [**Deep Learning**](https://www.ef.uns
   <img width="382" height="296" alt="image" src="https://github.com/user-attachments/assets/4c1ddf76-77af-41ea-b986-0e70a040a42b" />
 
 
----
+
 
 ## 3. Preprocessing
 
@@ -86,7 +86,7 @@ This project was completed as part of the [**Deep Learning**](https://www.ef.uns
 
   Mapping fixes the order of classes and simplifies pairing with the model (numeric labels are needed for loss/metrics).
 
----
+
 
 ## 4. Model
 
@@ -95,7 +95,7 @@ This project was completed as part of the [**Deep Learning**](https://www.ef.uns
 * **Class:** standart `SequenceClassification` (fully connected layer at the output with `num_labels=8`).
 * **Loss:** CrossEntropyLoss (built into the HF model class).
 
----
+
 
 ## 5. Training
 
@@ -135,7 +135,7 @@ training_args = TrainingArguments(
 
 **Optimizer / scheduler:** Trainer uses AdamW and a standard scheduler (linear warmup) by default. This is a suitable setting for fine-tuning transformers.
 
----
+
 
 ## 6. Results
 
@@ -170,7 +170,7 @@ training_args = TrainingArguments(
 <img width="592" height="491" alt="Снимок экрана 2025-10-03 142635" src="https://github.com/user-attachments/assets/1f65185f-7309-4ff6-850d-cb07ba08a3b9" />
 
 
----
+
 
 ## 7. Application
 
@@ -191,7 +191,7 @@ training_args = TrainingArguments(
 └── README.md
 ```
 
----
+
 
 ## 9. Future work
 
