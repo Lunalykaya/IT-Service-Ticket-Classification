@@ -120,18 +120,18 @@ training_args = TrainingArguments(
 ```
 
 
-* `output_dir="./results"` — папка для чекпойнтов и финальной модели.
-* `evaluation_strategy="epoch"` — валидация выполняется в конце каждой эпохи; удобно мониторить поведение модели по эпохам.
-* `save_strategy="epoch"` — сохраняем чекпоинт после каждой эпохи.
-* `learning_rate=2e-5` — типичное значение LR для fine-tuning BERT-подобных моделей: достаточно маленькое, чтобы не «сломать» предобученные веса.
-* `per_device_train_batch_size=32` — размер батча на одну GPU; при использовании 2 GPU effective batch = 32 × 2 = **64** (меньше шагов/эпоха, плавнее градиенты).
-* `per_device_eval_batch_size=32` — батч для валидации (снижает время валидации при сохранённой точности).
-* `num_train_epochs=3` — 2–4 эпох обычно достаточно для трансформеров; слишком много — риск переобучения.
-* `weight_decay=0.01` — L2-регуляризация (AdamW) — помогает обобщению.
-* `logging_dir="./logs"` — куда писать логи для tensorboard.
-* `logging_strategy="epoch"` и `logging_steps=50` — логируем в конце эпох (можно менять на шаги; при logging_strategy="epoch" logging_steps не критичен).
-* `load_best_model_at_end=True` — по окончании тренировки загрузить чекпоинт с наилучшей метрикой валидации (если задан metric_for_best_model).
-* `report_to=[]` — отключён W&B (чтобы не блокироваться ожиданием логина).
+* `output_dir="./results"` — folder for checkpoints and final model.
+* `evaluation_strategy="epoch"` — Validation is performed at the end of each epoch; it is convenient to monitor the model's behavior across epochs.
+* `save_strategy="epoch"` — save checkpoint after each era.
+* `learning_rate=2e-5` — typical LR value for fine-tuning BERT-like models: small enough not to "break" the pre-trained weights.
+* `per_device_train_batch_size=32` — batch size per GPU; when using 2 GPUs, effective batch = 32 × 2 = **64** (fewer steps/epoch, smoother gradients).
+* `per_device_eval_batch_size=32` — batch for validation (reduces validation time while maintaining accuracy).
+* `num_train_epochs=3` — 2-4 epochs are usually enough for transformers; too many and you risk overfitting.
+* `weight_decay=0.01` — L2 regularization (AdamW) - helps generalization.
+* `logging_dir="./logs"` — to write logs for Tensorboard.
+* `logging_strategy="epoch"` и `logging_steps=50` — log at the end of epochs (can be changed to steps; with logging_strategy="epoch" logging_steps is not critical).
+* `load_best_model_at_end=True` — At the end of training, load the checkpoint with the best validation metric (if metric_for_best_model is specified).
+* `report_to=[]` — W&B is disabled (to avoid being blocked by waiting for login).
 
 **Optimizer / scheduler:** Trainer uses AdamW and a standard scheduler (linear warmup) by default. This is a suitable setting for fine-tuning transformers.
 
@@ -182,12 +182,9 @@ training_args = TrainingArguments(
 
 ## 8. Repository structure
 ```
-├── data/               # Исходные датасеты (raw, processed)
-├── notebooks/          # Jupyter ноутбуки (EDA, обучение, inference)
-├── src/                # Скрипты: train.py, inference.py, service.py
-├── models/             # Сохранённые модели / ticket_classifier/
-├── results/            # логи/чекпойнты / tensorboard
-├── figures/            # графики (loss/metrics/confusion)
+├── data/               # data: raw, processed
+├── model/              # saved model (description of zip file)
+├── notebooks/          # Jupyter notebooks (EDA, training)
 └── README.md
 ```
 
